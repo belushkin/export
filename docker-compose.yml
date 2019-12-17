@@ -1,0 +1,32 @@
+version: '2'
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    links:
+      - db-mysql
+      - rabbitmq
+
+  db-mysql:
+    image: "mysql:5.7"
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: app
+    volumes:
+      - $VOLUME_DIR/data/volume/mysql:/var/lib/mysql
+      - $VOLUME_DIR/data/volume/logs/mysql:/var/log/mysql
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "8087:15672"
+
+  adminer:
+    image: adminer
+    restart: on-failure
+    ports:
+      - "8080:8080"
